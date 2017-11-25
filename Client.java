@@ -2,7 +2,9 @@
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
+import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.InetAddress;
@@ -11,16 +13,15 @@ import java.net.Socket;
 public class FileClient {
 
     static Socket socket;
+    static Socket socket2;
 
     public static void main(String[] args) throws Exception {
+        socket2 = new Socket(InetAddress.getLocalHost(), 50016);
+            BufferedReader inFromServer;
+            printFiles();
 
         while (true) {
             socket = new Socket(InetAddress.getLocalHost(), 50015);
-
-            BufferedReader inFromServer = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-
-            String files = inFromServer.readLine();
-            System.out.println(files);
 
             InputStream is = socket.getInputStream();
 
@@ -28,6 +29,7 @@ public class FileClient {
             BufferedReader inFromUser = new BufferedReader(new InputStreamReader(System.in));
 
             DataOutputStream outToServer = new DataOutputStream(socket.getOutputStream());
+            System.out.print("Enter the number next to one of the file names to receive it.(Enter nothing to terminate the program): ");
             String sentence = inFromUser.readLine();
             outToServer.writeBytes(sentence + '\n');
 
@@ -38,27 +40,33 @@ public class FileClient {
                 break;
                 //System.exit(0);
             } else if (sentence.equals("1")) {
-                fos = new FileOutputStream("D:\\Output\\XD2.txt");
+                File file = new File("D:\\Test\\Output\\XD2.txt");
+                fos = new FileOutputStream(file);
                 BufferedOutputStream bos = new BufferedOutputStream(fos);
-                while ((bytesRead = is.read(contents)) != -1) {
+                while ((bytesRead = is.read(contents)) > 0) {
                     bos.write(contents, 0, bytesRead);
                 }
+                System.out.println("File saved to "+file.getAbsolutePath()+"\n");
 
                 bos.flush();
             } else if (sentence.equals("2")) {
-                fos = new FileOutputStream("D:\\Output\\Pride and Prejudice 2.txt");
+                File file = new File("D:\\Test\\Output\\Pride and Prejudice 2.txt");
+                fos = new FileOutputStream(file);
                 BufferedOutputStream bos = new BufferedOutputStream(fos);
-                while ((bytesRead = is.read(contents)) != -1) {
+                while ((bytesRead = is.read(contents)) > 0) {
                     bos.write(contents, 0, bytesRead);
                 }
+                System.out.println("File saved to "+file.getAbsolutePath()+"\n");
 
                 bos.flush();
             } else if (sentence.equals("3")) {
-                fos = new FileOutputStream("D:\\Output\\Lmao2.txt");
+                File file = new File("D:\\Test\\Output\\Lmao2.txt");
+                fos = new FileOutputStream(file);
                 BufferedOutputStream bos = new BufferedOutputStream(fos);
-                while ((bytesRead = is.read(contents)) != -1) {
+                while ((bytesRead = is.read(contents)) > 0) {
                     bos.write(contents, 0, bytesRead);
                 }
+                System.out.println("File saved to "+file.getAbsolutePath()+"\n");
 
                 bos.flush();
             } else {
@@ -71,5 +79,12 @@ public class FileClient {
         }
 
         socket.close();
+    }
+
+    private static void printFiles() throws IOException {
+       BufferedReader inFromServer = new BufferedReader(new InputStreamReader(socket2.getInputStream()));
+
+        String files = inFromServer.readLine();
+        System.out.println(files+"\n");
     }
 }
