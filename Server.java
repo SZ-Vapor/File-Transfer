@@ -15,16 +15,20 @@ public class FileServer {
     static OutputStream os;
     public static int fLength;
     static Socket socket;
-    static File file1 = new File("D:\\XD.txt");
-    static File file2 = new File("D:\\Pride and Prejudice.txt");
-    static File file3 = new File("D:\\Lmao.txt");
+    static Socket socket2;
+    static File file1 = new File("D:\\Test\\XD.txt");
+    static File file2 = new File("D:\\Test\\Pride and Prejudice.txt");
+    static File file3 = new File("D:\\Test\\Lmao.txt");
 
     public static void main(String[] args) throws Exception {
         System.out.println("Running...");
+        ServerSocket ssock2 = new ServerSocket(50016);
+        socket2 = ssock2.accept();
+        sendFileNames();
         while (true) {
             ServerSocket ssock = new ServerSocket(50015);
             socket = ssock.accept();           
-            sendFileNames();
+            
            
             os = socket.getOutputStream();
 
@@ -69,7 +73,7 @@ public class FileServer {
     }
 
     private static void sendFileNames() throws IOException {
-        DataOutputStream outToClient = new DataOutputStream(socket.getOutputStream());
+        DataOutputStream outToClient = new DataOutputStream(socket2.getOutputStream());
         String sentence = "Available Files:  (1):" + file1.getName() + "   (2):" + file2.getName() + "   (3):" + file3.getName();
         outToClient.writeBytes(sentence + "\n");
 
